@@ -1,0 +1,31 @@
+modLoader="javafml"
+loaderVersion="[36,)"
+license="MIT License"
+issueTrackerURL="https://github.com/SocketMods/SocketNukes/issues"
+
+[[mods]]
+modId="socketmodels"
+version="${file.jarVersion}"
+displayName="SocketModels"
+#updateJSONURL=""
+displayURL="https://socketsmod.dev/"
+#logoFile="examplemod.png"
+credits=""
+authors="The team at SocketMods"
+description='''
+TEMP: Something Something Models :TEMP
+'''
+
+[[dependencies.socketmodels]]
+    modId="forge"
+    mandatory=true
+    versionRange="[36,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.socketmodels]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.16.5,1.17)"
+    ordering="NONE"
+    side="BOTH"

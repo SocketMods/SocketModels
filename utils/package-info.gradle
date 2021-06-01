@@ -1,0 +1,71 @@
+import java.util.stream.Collectors
+
+/**
+ *  Generates package-info.java for appropriate packages
+ *
+ *  Based on: https://stackoverflow.com/a/40091450
+ */
+task generatePackageInfos() {
+    group = "utility"
+    description = "Generates package-info.java for all packages"
+
+    outputs.upToDateWhen { false }
+
+    doLast {
+        def sourceDirectories = sourceSets.stream()
+                .map { source -> source.java.srcDirs }
+                .flatMap { fileSet -> fileSet.stream() }
+                .collect(Collectors.toList())
+
+        sourceDirectories.forEach { sourceDirectory ->
+            if (!sourceDirectory.exists()) return
+            sourceDirectory.eachDirRecurse { directory ->
+                // If file contains java source files
+                def files = directory.list { _, name -> name.endsWith(".java") }
+                if (files == null || files.size() == 0) return
+
+                logger.debug "Visiting $directory for package-info.java"
+
+                // Create package-info string
+                def packageString = generatePackageInfo(getPackageName(sourceDirectory, directory))
+
+                // Skip if package-info.java exists and contains the expected string
+                def packageInfo = new File(directory, "package-info.java")
+                if (packageInfo.exists() && packageString.equals(packageInfo.text.replace('\r\n', '\n'))) return
+
+                // Write package-info.java
+                logger.info "Writing package-info.java for: $packageInfo"
+                if (packageInfo.exists()) packageInfo.delete()
+                packageInfo.write(packageString)
+            }
+        }
+    }
+}
+
+// Always generate the package-infos for all of the compile tasks
+tasks.withType(JavaCompile) {
+    dependsOn generatePackageInfos
+}
+
+static String generatePackageInfo(String packageName) {
+    return """@MethodsReturnNonnullByDefault
+             |@ParametersAreNonnullByDefault
+             |package $packageName;
+             |
+             |import javax.annotation.ParametersAreNonnullByDefault;
+             |
+             |import mcp.MethodsReturnNonnullByDefault;""".stripMargin()
+}
+
+static String getPackageName(File root, File current) {
+    def src = root.absolutePath
+    def cur = current.absolutePath
+
+    def prefix = cur.indexOf(src)
+    def result = cur.substring(prefix + src.size()).replace("\\", "/")
+
+    result = result.replace("/", ".")
+    if (result.startsWith(".")) result = result.substring(1)
+
+    return result
+}
