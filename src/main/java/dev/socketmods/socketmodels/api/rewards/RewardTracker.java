@@ -103,8 +103,7 @@ public class RewardTracker {
             //TODO: Add fallback if local doesn't exist as well?
             HTTP.downloadEtag(FMLPaths.CONFIGDIR.get().resolve(CACHE_PATH), REMOTE_URL, RewardTracker::handle);
         } catch (Exception e) {
-            SocketModels.LOGGER.warn("Could not load RewardTracker");
-            SocketModels.LOGGER.warn(e);
+            SocketModels.LOGGER.warn("Could not load RewardTracker", e);
         }
     }
 

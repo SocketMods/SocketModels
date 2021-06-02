@@ -59,4 +59,14 @@ public class Person {
 
         return new Person(left.name, left.uuid, permissions);
     }
+
+    /**
+     * Fuck you gson
+     */
+    public static @Nullable Person recreate(@Nullable Person input) {
+        if (input == null) return null;
+
+        return new Person(input.name, input.uuid, input.permissions);
+    }
+
 }

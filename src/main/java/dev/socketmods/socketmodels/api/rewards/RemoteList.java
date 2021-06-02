@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
@@ -22,9 +23,17 @@ public class RemoteList {
         this.people = Sets.filter(people, Objects::nonNull);
     }
 
+    /**
+     * Fuck you gson
+     */
+    public static RemoteList recreate(RemoteList input) {
+
+        return new RemoteList(input.version, input.people.stream().map(Person::recreate).collect(Collectors.toSet()));
+    }
+
     public static RemoteList parse(String data) throws IOException {
         try {
-            return GSON.fromJson(data, RemoteList.class);
+            return recreate(GSON.fromJson(data, RemoteList.class));
         } catch (Exception e) {
             throw new IOException(e);
         }
@@ -32,7 +41,7 @@ public class RemoteList {
 
     public static RemoteList parse(Reader reader) throws IOException {
         try {
-            return GSON.fromJson(reader, RemoteList.class);
+            return recreate(GSON.fromJson(reader, RemoteList.class));
         } catch (Exception e) {
             throw new IOException(e);
         }
