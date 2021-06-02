@@ -2,6 +2,7 @@ package dev.socketmods.socketmodels;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import dev.socketmods.socketmodels.api.rewards.RewardTracker;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod(SocketModels.MODID)
@@ -11,6 +12,10 @@ public class SocketModels {
 
     public SocketModels() {
         LOGGER.info("Hello World");
+
+        RewardTracker
+            .whenLoaded()
+            .thenRun(() -> SocketModels.LOGGER.info("Loaded Rewards from Tracker!"));
     }
 
 }
